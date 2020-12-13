@@ -5,13 +5,8 @@ import { ListItem, Avatar } from 'react-native-elements';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
-import { ChildDataProps, Character } from './';
+import { ChildDataProps, Character, NavigationProp } from './';
 
-type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
-
-interface NavigationProp {
-    navigation: ProfileScreenNavigationProp;
-}
 
 type Props = NavigationProp & ChildDataProps;
 
@@ -36,14 +31,14 @@ const renderItem = (props: RenderItemProps & NavigationProp) => {
 const keyExtractor = (item, index) => index.toString();
 
 const List = (props: Props): JSX.Element => {
-    const { navigation, data } = props;
+    const { navigation, characters } = props;
     return (
         <View style={styles.container}>
             <StatusBar style="auto" />
             <FlatList
                 style={styles.list}
                 keyExtractor={keyExtractor}
-                data={data && data.characters && data.characters.results}
+                data={ characters}
                 renderItem={(character) => renderItem({ ...character, navigation })}
             />
         </View>
