@@ -5,6 +5,7 @@ import { ListItem, Avatar } from 'react-native-elements';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
+import { SearchBox } from './search-box'
 import { ChildDataProps, Character, NavigationProp } from './';
 import { IContext, useSharedState } from '../shared-state';
 
@@ -67,6 +68,7 @@ const List = (props: Props): JSX.Element => {
                     return <ActivityIndicator />;
 								}}
 								ListFooterComponentStyle={{ padding: 30 }}
+								ListHeaderComponent={ SearchBox }
                 onEndReached={nextPage}
                 onEndReachedThreshold={0.1}
             />
