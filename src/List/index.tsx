@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, Text, View, Button, ActivityIndicator } from 'react-native';
 import { useQuery } from '@apollo/client';
+import { get } from 'lodash'
 import List from './list';
 import { Character, NavigationProp, InputProps, Variables, Response } from './types';
 import { IContext, useSharedState } from '../shared-state';
@@ -24,7 +25,7 @@ export const ListContainer = (props: NavigationProp) => {
             {...props}
             info={data && data.characters && data.characters.info}
             loading={loading}
-            characters={data && data.characters && data.characters.results}
+            characters={ get(data, 'characters.results', []) }
         />
     );
 };
