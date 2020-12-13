@@ -1,33 +1,63 @@
-import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, Button } from 'react-native';
-import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../App';
+import { gql } from "@apollo/client";
+import { ChildDataProps, graphql } from "@apollo/react-hoc";
+import List from './list'
 
-type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+//characters(page: 2, filter: { name: "rick" }) {
 
-type Props = {
-    navigation: ProfileScreenNavigationProp;
+const CHARACTERS_QUERY = gql`
+query {
+  characters{
+    info {
+      next
+      prev
+      pages
+      count
+    }
+    results {
+      name
+      image
+    }
+  }
+}
+`;
+
+interface Character {
+  name: string;
+  image: string;
 };
 
-const List = (props: Props): JSX.Element => {
-    const { navigation } = props;
-    return (
-        <View style={styles.container}>
-            <StatusBar style="auto" />
-            <Text>Screen 1 : List Component</Text>
-            <Button onPress={() => navigation.navigate('Details', { id: '1' })} title="Go to details page" />
-        </View>
-    );
+interface Info {
+	count: number;
+	pages: number;
+	next: number;
+	prev:number;
+}
+interface Response {
+	characters: {
+		info: Info;
+		results: [Character];
+	}
 };
 
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
+interface Variables {
+  name?: string;
+  page?: string;
+};
+
+interface InputProps {
+  name?: string;
+  page?: string;
+};
+type ChildProps = ChildDataProps<InputProps, Response, Variables>;
+
+
+export const withCharacters = graphql<InputProps, Response, Variables, ChildProps>(CHARACTERS_QUERY, {
+  options: ({ name, page }) => ({
+    variables: { name, page }
+  })
 });
 
-export default List
+export default withCharacters(List)
+
