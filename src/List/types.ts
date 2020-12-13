@@ -28,10 +28,10 @@ export interface Response {
 
 export interface Variables {
     name?: string;
-    page?: string;
+    page?: number;
 }
 
 export interface InputProps {
     name?: string;
-    page?: string;
+    page?: number;
 }

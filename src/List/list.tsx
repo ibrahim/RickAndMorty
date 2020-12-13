@@ -6,9 +6,10 @@ import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../../App';
 import { ChildDataProps, Character, NavigationProp } from './';
+import { IContext, useSharedState } from '../shared-state'
 
 
-type Props = NavigationProp & ChildDataProps;
+type Props = NavigationProp;
 
 interface RenderItemProps {
     items: Character;
@@ -31,15 +32,25 @@ const renderItem = (props: RenderItemProps & NavigationProp) => {
 const keyExtractor = (item, index) => index.toString();
 
 const List = (props: Props): JSX.Element => {
-    const { navigation, characters } = props;
+    const { navigation, characters, info, loading } = props;
+		const [ items, setItems ] = React.useState<[Character]>([])
+    const { page, setPage } = useSharedState();
+		React.useEffect(()=>{
+			if(characters) setItems( state => [...state, ...characters]);
+		},[characters])
+		const nextPage = (page: number) => {
+			if(info && info.next){ setPage(info.next) }
+		}
     return (
         <View style={styles.container}>
             <StatusBar style="auto" />
             <FlatList
                 style={styles.list}
                 keyExtractor={keyExtractor}
-                data={ characters}
+                data={ items }
                 renderItem={(character) => renderItem({ ...character, navigation })}
+								onEndReached={ nextPage }
+								onEndReachedThreshold ={0.1}
             />
         </View>
     );
