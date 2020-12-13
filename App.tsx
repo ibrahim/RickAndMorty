@@ -4,7 +4,8 @@ import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import { ApolloProvider } from '@apollo/client';
 import List from './src/List';
-import { client } from './src/apollo-client'
+import { client } from './src/apollo-client';
+import { SharedState } from './src/shared-state';
 
 function DetailsScreen() {
     return (
@@ -21,17 +22,21 @@ export type RootStackParamList = {
 const Stack = createStackNavigator<RootStackParamList>();
 
 const App = (): JSX.Element => {
+    const [page, setPage] = React.useState<number>(1);
+    const [name, setName] = React.useState<string>('');
     return (
-			<ApolloProvider client={client}>
-				<NavigationContainer>
-					<Stack.Navigator>
-						<Stack.Screen name="Home" options={{ title: 'Overview' }}>
-						{(props) => <List {...props} />}
-					</Stack.Screen>
-					<Stack.Screen name="Details" component={DetailsScreen} />
-				</Stack.Navigator>
-			</NavigationContainer>
-		</ApolloProvider>
+        <SharedState.Provider value={{ page, setPage, name, setName }}>
+            <ApolloProvider client={client}>
+                <NavigationContainer>
+                    <Stack.Navigator>
+                        <Stack.Screen name="Home" options={{ title: 'Overview' }}>
+                            {(props) => <List {...props} />}
+                        </Stack.Screen>
+                        <Stack.Screen name="Details" component={DetailsScreen} />
+                    </Stack.Navigator>
+                </NavigationContainer>
+            </ApolloProvider>
+        </SharedState.Provider>
     );
 };
 
