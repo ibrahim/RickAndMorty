@@ -64,8 +64,9 @@ const List = (props: Props): JSX.Element => {
                 renderItem={(character) => renderItem({ ...character, navigation })}
                 ListFooterComponent={() => {
                     if (!refreshing) return null;
-                    return <ActivityIndicator style={{ margin: 30 }} />;
-                }}
+                    return <ActivityIndicator />;
+								}}
+								ListFooterComponentStyle={{ padding: 30 }}
                 onEndReached={nextPage}
                 onEndReachedThreshold={0.1}
             />
