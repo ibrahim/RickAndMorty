@@ -1,6 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, Button, FlatList } from 'react-native';
+import { StyleSheet, Text, View, Button, FlatList, ActivityIndicator } from 'react-native';
 import { ListItem, Avatar } from 'react-native-elements';
 import { StackNavigationProp } from '@react-navigation/stack';
 import { useNavigation } from '@react-navigation/native';
@@ -33,17 +33,26 @@ const keyExtractor = (item, index) => index.toString();
 const List = (props: Props): JSX.Element => {
     const { navigation, characters, info, loading } = props;
     const [items, setItems] = React.useState<[Character]>([]);
+    const [refreshing, setRefreshing] = React.useState<Boolean>(false);
     const { page, setPage } = useSharedState();
 
     React.useEffect(() => {
-        if (characters) setItems((state) => [...state, ...characters]);
+        if (characters) {
+            setItems((state) => [...state, ...characters]);
+            setRefreshing(false);
+        }
     }, [characters]);
 
-    const nextPage = React.useCallback((page: number) => {
-        if (info && info.next) {
-            setPage(info.next);
-        }
-    },[info, setPage]);
+    const nextPage = React.useCallback(
+        (page: number) => {
+            if (refreshing) return;
+            if (info && info.next) {
+                setPage(info.next);
+                setRefreshing(true);
+            }
+        },
+        [info, setPage, refreshing],
+    );
 
     return (
         <View style={styles.container}>
@@ -53,6 +62,10 @@ const List = (props: Props): JSX.Element => {
                 keyExtractor={keyExtractor}
                 data={items}
                 renderItem={(character) => renderItem({ ...character, navigation })}
+                ListFooterComponent={() => {
+                    if (!refreshing) return null;
+                    return <ActivityIndicator style={{ margin: 30 }} />;
+                }}
                 onEndReached={nextPage}
                 onEndReachedThreshold={0.1}
             />
