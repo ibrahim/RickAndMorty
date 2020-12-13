@@ -1,5 +1,8 @@
 node_modules/**/*
 .expo/*
+*.swp
+*.swo
+*.swn
 npm-debug.*
 *.jks
 *.p8
