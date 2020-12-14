@@ -1,26 +1,21 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import { useSharedState } from '../shared-state';
+import { useAppContext, withHooks } from '../context';
 
-export const SearchBox = () => {
+interface ComponentProps {
+    name: string;
+    cancelSearch: () => void;
+    newSearch: (s:string) => void;
+}
+type Props = ComponentProps;
+export const SearchBox = (props: Props) => {
     const [query, setQuery] = React.useState<string>('');
-    const { name, setName, setPage, setErrorMessages } = useSharedState();
+    const { name, cancelSearch, newSearch } = props;
 
     React.useEffect(() => {
-        if (name !== query) {
-            console.log('Setting name', query, name);
-            setErrorMessages([]);
-            setPage(1);
-            setName(query);
-        }
-    }, [query, name, setName, setPage, setErrorMessages]);
-
-    const cancelSearch = React.useCallback(() => {
-        setErrorMessages([]);
-        setPage(1);
-        setName('');
-    }, [setErrorMessages, setPage, setName]);
+        if (name !== query) newSearch(query);
+    }, [query, name, newSearch]);
 
     return (
         <SearchBar
@@ -33,3 +28,14 @@ export const SearchBox = () => {
         />
     );
 };
+const useHooksToProps = () => {
+    const { getName, cancelSearch, newSearch } = useAppContext();
+
+    return {
+        name: getName(),
+        cancelSearch,
+        newSearch,
+    };
+};
+
+export default withHooks(useHooksToProps)(SearchBox);

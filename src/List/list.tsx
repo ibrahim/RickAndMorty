@@ -2,56 +2,59 @@ import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
 import { ListItem, Avatar } from 'react-native-elements';
-import { isEmpty } from 'lodash'
-import { SearchBox } from './search-box';
+import { isEmpty } from 'lodash';
+import SearchBox from './search-box';
 import { Character, NavigationProp, Info } from './types';
-import { useSharedState } from '../shared-state';
+import { useAppContext, withHooks } from '../context';
 
 interface ComponentProps {
     characters: Character[];
     info: Info;
 }
-type Props = NavigationProp & ComponentProps;
+interface HooksProps {
+    name: string;
+    errorMessages: string[];
+    refreshing: boolean;
+    setErrorMessages: (s: string[]) => void;
+    setRefreshing: (s: boolean) => void;
+    setPage: (s: number) => void;
+}
+type Props = NavigationProp & ComponentProps & HooksProps;
 
 interface RenderItemProps {
     item: Character;
     index: number;
 }
 
-const renderItem = (props: RenderItemProps & NavigationProp) => {
-    const { item, navigation } = props;
-    return (
-        <ListItem bottomDivider onPress={() => navigation.navigate('Details', { id: '1' })}>
-            {item.image && <Avatar title={item.name} source={{ uri: item.image }} />}
-            <ListItem.Content>
-                <ListItem.Title>{item.name}</ListItem.Title>
-            </ListItem.Content>
-            <ListItem.Chevron />
-        </ListItem>
-    );
-};
-
 const NOT_FOUND = '404: Not Found';
 
 const human = (message: string) => {
-	switch(message){
-		case NOT_FOUND:
-			return "No matching name was found."
-	}
-	return "";
-}
+    switch (message) {
+        case NOT_FOUND:
+            return 'No matching name was found.';
+    }
+    return '';
+};
 
-const keyExtractor = (item: Character, index: number) => `${item.id}-${index}` 
+const keyExtractor = (item: Character, index: number) => `${item.id}-${index}`;
 
 const ErrorMessage = ({ errorMessages }: { errorMessages: string[] }) => {
-	if(isEmpty(errorMessages)) return null;
-	return <View style={ styles.errorMessages }>{errorMessages && errorMessages.map((msg, i) => <Text style={{ fontSize: 20 }} key={i}>{ human(msg) }</Text>)}</View>;
+    if (isEmpty(errorMessages)) return null;
+    return (
+        <View style={styles.errorMessages}>
+            {errorMessages &&
+                errorMessages.map((msg, i) => (
+                    <Text style={{ fontSize: 20 }} key={i}>
+                        {human(msg)}
+                    </Text>
+                ))}
+        </View>
+    );
 };
 
 const List = (props: Props): JSX.Element => {
-    const { navigation, characters, info } = props;
+    const { navigation, characters, info, name, setPage, refreshing, errorMessages, setRefreshing } = props;
     const [items, setItems] = React.useState<Character[]>([]);
-    const { name, setPage, refreshing, errorMessages, setRefreshing } = useSharedState();
     const [lastName, setLastName] = React.useState<string>('');
 
     React.useEffect(() => {
@@ -81,10 +84,20 @@ const List = (props: Props): JSX.Element => {
                 style={styles.list}
                 keyExtractor={keyExtractor}
                 data={items}
-                renderItem={(character) => renderItem({ ...character, navigation })}
+                renderItem={({ item }: RenderItemProps) => {
+                    return (
+                        <ListItem bottomDivider onPress={() => navigation.navigate('Details', { id: '1' })}>
+                            {item.image && <Avatar title={item.name} source={{ uri: item.image }} />}
+                            <ListItem.Content>
+                                <ListItem.Title>{item.name}</ListItem.Title>
+                            </ListItem.Content>
+                            <ListItem.Chevron />
+                        </ListItem>
+                    );
+                }}
                 ListFooterComponent={() => {
                     if (!refreshing) return null;
-                    return <ActivityIndicator size="large"/>;
+                    return <ActivityIndicator size="large" />;
                 }}
                 ListFooterComponentStyle={{ padding: 60 }}
                 ListHeaderComponent={SearchBox}
@@ -108,13 +121,25 @@ const styles = StyleSheet.create({
     errorMessages: {
         width: '100%',
         height: '100%',
-				justifyContent: 'center',
-				alignItems: 'center',
-				flexGrow: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexGrow: 1,
     },
     list: {
         width: '100%',
     },
 });
 
-export default List;
+const useHooksToProps = () => {
+    const { getName, getPage, setPage, setRefreshing, setErrorMessages } = useAppContext();
+
+    return {
+        name: getName(),
+        page: getPage(),
+        setPage,
+        setErrorMessages,
+        setRefreshing,
+    };
+};
+
+export default withHooks(useHooksToProps)(List);
