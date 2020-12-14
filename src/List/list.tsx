@@ -4,35 +4,30 @@ import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-nativ
 import { ListItem, Avatar } from 'react-native-elements';
 import { isEmpty } from 'lodash';
 import SearchBox from './search-box';
-import { Character, NavigationProp, Info } from './types';
-import { useAppContext, withHooks } from '../context';
+import { Character, NavigationProp, Info} from './types';
+
 
 interface ComponentProps {
     characters: Character[];
-    info: Info;
+		info: Info;
+		fetchMore: any;
+		loading: boolean;
 }
-interface HooksProps {
-    page: number;
-    errorMessages: string[];
-    refreshing: boolean;
-    setErrorMessages: (s: string[]) => void;
-    setRefreshing: (s: boolean) => void;
-    nextPage: (s: number) => void;
-}
-type Props = NavigationProp & ComponentProps & HooksProps;
+
+type Props = NavigationProp & ComponentProps;
 
 interface RenderItemProps {
     item: Character;
 }
 
-const NOT_FOUND = '404: Not Found';
+const NOT_FOUND = 'Error: 404: Not Found';
 const ITEM_HEIGHT = 64;
 const human = (message: string) => {
     switch (message) {
         case NOT_FOUND:
             return 'No matching name was found.';
     }
-    return '';
+    return message;
 };
 
 const keyExtractor = (item: Character) => `${item.id}-${item.name}`;
@@ -44,7 +39,7 @@ const ErrorMessage = ({ errorMessages }: { errorMessages: string[] }) => {
             {errorMessages &&
                 errorMessages.map((msg, i) => (
                     <Text style={{ fontSize: 20 }} key={i}>
-                        {human(msg)}
+                        {human(String(msg))}
                     </Text>
                 ))}
         </View>
@@ -57,7 +52,7 @@ const getItemLayout = (data: any, index: number) => ({ length: ITEM_HEIGHT, offs
 const renderItem = ({ navigation }: NavigationProp) => ({ item }: RenderItemProps) => {
     return (
         <ListItem bottomDivider onPress={() => navigation.navigate('Details', { id: '1' })}>
-            {item.image && <Avatar title={item.name} source={{ uri: item.image }} />}
+            { item.image && <Avatar title={item.name} source={{ uri: item.image }} />}
             <ListItem.Content>
                 <ListItem.Title>{item.name}</ListItem.Title>
             </ListItem.Content>
@@ -66,48 +61,61 @@ const renderItem = ({ navigation }: NavigationProp) => ({ item }: RenderItemProp
     );
 };
 const List = (props: Props): JSX.Element => {
-    const { navigation, characters, info, page, nextPage, refreshing, errorMessages, setRefreshing } = props;
-    const [items, setItems] = React.useState<Character[]>([]);
+    const { navigation, characters, info, loading, fetchMore } = props;
+		const [name, setName] = React.useState<string>("")
+		const [errorMessages, setErrorMessages] = React.useState<string[]>([])
+    const onEndReached = async () => {
+			if(info && info.next){
+				try{
+					await fetchMore({
+						variables: { page: info.next, filter: { name } }
+					});
+				}catch(error){
+					console.log("Error Fetch more", {error})
+				}
+			}
+    }
 
-    React.useEffect(() => {
-        if (characters) {
-            setItems((state) => (page === 1 ? characters : [...state, ...characters]));
-            setRefreshing(false);
-        }
-    }, [characters]);
 
-    const onEndReached = React.useCallback(() => {
-        if (info && info.next) {
-            nextPage(info.next);
-        }
-    }, [info, nextPage]);
-
-    const Footer = React.useMemo(() => {
-        if (!refreshing) return null;
-        console.log({ refreshing });
+    const Footer = React.useCallback(() => {
+        if (!loading) return null;
+        console.log({ loading });
         return <ActivityIndicator size="large" />;
-    }, [refreshing]);
+    }, [loading]);
 
     const renderItemWithNavigation = React.useCallback(renderItem({ navigation }), [navigation]);
+		const newSearch = async (name:string) => {
+				setName(name)
+				setErrorMessages([])
+				try{
+					await fetchMore({
+						variables: { page: 1, filter: { name: name ? name : "" } }
+					});
+				}catch(e){
+					console.log("SearchBox fetchMore", {e})
+					setErrorMessages(Array(e))
+				}
+		}
+		const hasError = !isEmpty(errorMessages)
     return (
         <View style={styles.container}>
             <StatusBar style="auto" />
-            <FlatList
-                style={styles.list}
-                keyExtractor={keyExtractor}
-                data={items}
-                renderItem={renderItemWithNavigation}
-                ListFooterComponent={Footer}
-                ListFooterComponentStyle={{ padding: 60 }}
-                ListHeaderComponent={SearchBox}
-                ListEmptyComponent={<ErrorMessage errorMessages={errorMessages} />}
-                stickyHeaderIndices={[0]}
-                onEndReached={onEndReached}
-                onEndReachedThreshold={0.1}
-                updateCellsBatchingPeriod={50}
-                getItemLayout={getItemLayout}
-                maxToRenderPerBatch={30}
-            />
+						<FlatList
+							style={styles.list}
+							keyExtractor={keyExtractor}
+							data={ hasError ? [] : characters}
+							renderItem={renderItemWithNavigation}
+							ListFooterComponent={Footer}
+							ListFooterComponentStyle={{ padding: 60 }}
+							ListHeaderComponent={<SearchBox newSearch={ newSearch } name={name}/>}
+							ListEmptyComponent={<ErrorMessage errorMessages={errorMessages}/>}
+							stickyHeaderIndices={[0]}
+							onEndReached={onEndReached}
+							onEndReachedThreshold={0.2}
+							/* updateCellsBatchingPeriod={50} */
+							/* getItemLayout={getItemLayout} */
+							/* maxToRenderPerBatch={30} */
+							/>
         </View>
     );
 };
@@ -132,17 +140,4 @@ const styles = StyleSheet.create({
     },
 });
 
-const useHooksToProps = (): HooksProps => {
-    const { getPage, nextPage, getRefreshing, getErrorMessages, setRefreshing, setErrorMessages } = useAppContext();
-
-    return {
-        page: getPage(),
-        nextPage,
-        errorMessages: getErrorMessages(),
-        refreshing: getRefreshing(),
-        setErrorMessages,
-        setRefreshing,
-    };
-};
-
-export default withHooks(useHooksToProps)(List);
+export default List;

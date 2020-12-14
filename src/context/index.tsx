@@ -1,6 +1,5 @@
 import React, { createContext, useContext, useState, useMemo, Dispatch, SetStateAction } from 'react';
 import produce from 'immer';
-import { debounce } from 'lodash';
 import { withHooks } from './with-hooks';
 
 export type AppState = {
@@ -80,7 +79,7 @@ const useReducer = (props: ReducerProps) => {
         );
     };
     const nextPage = (page:number) => {
-				if(state.refreshing) return;
+				if(state.refreshing) { console.log("Skip nextPage call"); return;}
         setState(
             produce((draft) => {
                 draft.refreshing = true;
@@ -90,7 +89,7 @@ const useReducer = (props: ReducerProps) => {
         );
     };
 
-    const newSearch = debounce((name: string) => {
+    const newSearch = (name: string) => {
         setState(
             produce((draft) => {
                 draft.errorMessages = [];
@@ -98,7 +97,7 @@ const useReducer = (props: ReducerProps) => {
 								draft.name = name
             }),
         );
-    },500);
+    };
 		
     const getPage = () => state.page;
     const getRefreshing = () => state.refreshing;

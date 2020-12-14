@@ -17,24 +17,21 @@ interface HooksProps {
 type Props = NavigationProp & HooksProps;
 
 export const ListContainer = (props: Props) => {
-    const { name, page, setErrorMessages, errorMessages } = props;
-    const { error, data } = useQuery<Response, Variables>(CHARACTERS_QUERY, {
+    const { data, fetchMore, loading } = useQuery<Response, Variables>(CHARACTERS_QUERY, {
         variables: {
-            filter: { name },
-            page,
+            filter: { name: '' },
+            page: 1,
         },
     });
 
-		console.log({ errorMessages, name, page });
-    React.useEffect(() => {
-        if (error) {
-            const messages = error.graphQLErrors.map((i) => i.message);
-            setErrorMessages(messages);
-        }
-    }, [error]);
-
     return (
-        <List {...props} info={get(data, 'characters.info', null)} characters={get(data, 'characters.results', [])} />
+			<List 
+				{...props} 
+				fetchMore={fetchMore} 
+				info={get(data, 'characters.info', null)} 
+				characters={get(data, 'characters.results', [])} 
+				loading={ loading }
+			/>
     );
 };
 
