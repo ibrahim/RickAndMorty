@@ -12,22 +12,21 @@ interface ComponentProps {
     info: Info;
 }
 interface HooksProps {
-    name: string;
+    page: number;
     errorMessages: string[];
     refreshing: boolean;
     setErrorMessages: (s: string[]) => void;
     setRefreshing: (s: boolean) => void;
-    setPage: (s: number) => void;
+    nextPage: (s: number) => void;
 }
 type Props = NavigationProp & ComponentProps & HooksProps;
 
 interface RenderItemProps {
     item: Character;
-    index: number;
 }
 
 const NOT_FOUND = '404: Not Found';
-
+const ITEM_HEIGHT = 64;
 const human = (message: string) => {
     switch (message) {
         case NOT_FOUND:
@@ -36,7 +35,7 @@ const human = (message: string) => {
     return '';
 };
 
-const keyExtractor = (item: Character, index: number) => `${item.id}-${index}`;
+const keyExtractor = (item: Character) => `${item.id}-${item.name}`;
 
 const ErrorMessage = ({ errorMessages }: { errorMessages: string[] }) => {
     if (isEmpty(errorMessages)) return null;
@@ -52,31 +51,44 @@ const ErrorMessage = ({ errorMessages }: { errorMessages: string[] }) => {
     );
 };
 
+//eslint-disable-next-line
+const getItemLayout = (data: any, index: number) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index });
+
+const renderItem = ({ navigation }: NavigationProp) => ({ item }: RenderItemProps) => {
+    return (
+        <ListItem bottomDivider onPress={() => navigation.navigate('Details', { id: '1' })}>
+            {item.image && <Avatar title={item.name} source={{ uri: item.image }} />}
+            <ListItem.Content>
+                <ListItem.Title>{item.name}</ListItem.Title>
+            </ListItem.Content>
+            <ListItem.Chevron />
+        </ListItem>
+    );
+};
 const List = (props: Props): JSX.Element => {
-    const { navigation, characters, info, name, setPage, refreshing, errorMessages, setRefreshing } = props;
+    const { navigation, characters, info, page, nextPage, refreshing, errorMessages, setRefreshing } = props;
     const [items, setItems] = React.useState<Character[]>([]);
-    const [lastName, setLastName] = React.useState<string>('');
 
     React.useEffect(() => {
         if (characters) {
-            const isSearchResults = lastName !== name;
-            setItems((state) => (isSearchResults ? characters : [...state, ...characters]));
+            setItems((state) => (page === 1 ? characters : [...state, ...characters]));
             setRefreshing(false);
         }
     }, [characters]);
 
-    React.useEffect(() => {
-        if (lastName !== name) setLastName(name);
-    }, [name]);
-
-    const nextPage = React.useCallback(() => {
-        if (refreshing) return;
+    const onEndReached = React.useCallback(() => {
         if (info && info.next) {
-            setPage(info.next);
-            setRefreshing(true);
+            nextPage(info.next);
         }
-    }, [info, setPage, refreshing]);
+    }, [info, nextPage]);
 
+    const Footer = React.useMemo(() => {
+        if (!refreshing) return null;
+        console.log({ refreshing });
+        return <ActivityIndicator size="large" />;
+    }, [refreshing]);
+
+    const renderItemWithNavigation = React.useCallback(renderItem({ navigation }), [navigation]);
     return (
         <View style={styles.container}>
             <StatusBar style="auto" />
@@ -84,27 +96,17 @@ const List = (props: Props): JSX.Element => {
                 style={styles.list}
                 keyExtractor={keyExtractor}
                 data={items}
-                renderItem={({ item }: RenderItemProps) => {
-                    return (
-                        <ListItem bottomDivider onPress={() => navigation.navigate('Details', { id: '1' })}>
-                            {item.image && <Avatar title={item.name} source={{ uri: item.image }} />}
-                            <ListItem.Content>
-                                <ListItem.Title>{item.name}</ListItem.Title>
-                            </ListItem.Content>
-                            <ListItem.Chevron />
-                        </ListItem>
-                    );
-                }}
-                ListFooterComponent={() => {
-                    if (!refreshing) return null;
-                    return <ActivityIndicator size="large" />;
-                }}
+                renderItem={renderItemWithNavigation}
+                ListFooterComponent={Footer}
                 ListFooterComponentStyle={{ padding: 60 }}
                 ListHeaderComponent={SearchBox}
                 ListEmptyComponent={<ErrorMessage errorMessages={errorMessages} />}
                 stickyHeaderIndices={[0]}
-                onEndReached={nextPage}
+                onEndReached={onEndReached}
                 onEndReachedThreshold={0.1}
+                updateCellsBatchingPeriod={50}
+                getItemLayout={getItemLayout}
+                maxToRenderPerBatch={30}
             />
         </View>
     );
@@ -130,13 +132,14 @@ const styles = StyleSheet.create({
     },
 });
 
-const useHooksToProps = () => {
-    const { getName, getPage, setPage, setRefreshing, setErrorMessages } = useAppContext();
+const useHooksToProps = (): HooksProps => {
+    const { getPage, nextPage, getRefreshing, getErrorMessages, setRefreshing, setErrorMessages } = useAppContext();
 
     return {
-        name: getName(),
         page: getPage(),
-        setPage,
+        nextPage,
+        errorMessages: getErrorMessages(),
+        refreshing: getRefreshing(),
         setErrorMessages,
         setRefreshing,
     };

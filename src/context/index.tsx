@@ -16,10 +16,11 @@ export interface IContext {
     setRefreshing: (s: boolean) => void;
     getErrorMessages: () => string[];
     getPage: () => number;
-    getName: () => void;
+    getName: () => string;
     getRefreshing: () => boolean;
 		cancelSearch: () => void;
 		newSearch: (s:string) => void;
+		nextPage: (s: number) => void;
 }
 
 export const initialState: AppState = {
@@ -36,6 +37,7 @@ interface ReducerProps {
 
 const useReducer = (props: ReducerProps) => {
     const { state, setState } = props;
+
     const setErrorMessages = (errorMessages: string[]) => {
         setState(
             produce((draft) => {
@@ -51,6 +53,7 @@ const useReducer = (props: ReducerProps) => {
             }),
         );
     };
+
     const setPage = (page: number) => {
         setState(
             produce((draft) => {
@@ -58,6 +61,7 @@ const useReducer = (props: ReducerProps) => {
             }),
         );
     };
+
     const setRefreshing = (refreshing: boolean) => {
         setState(
             produce((draft) => {
@@ -75,6 +79,17 @@ const useReducer = (props: ReducerProps) => {
             }),
         );
     };
+    const nextPage = (page:number) => {
+				if(state.refreshing) return;
+        setState(
+            produce((draft) => {
+                draft.refreshing = true;
+                draft.errorMessages = [];
+								draft.page = page;
+            }),
+        );
+    };
+
     const newSearch = debounce((name: string) => {
         setState(
             produce((draft) => {
@@ -101,6 +116,7 @@ const useReducer = (props: ReducerProps) => {
         getErrorMessages,
 				cancelSearch,
 				newSearch,
+				nextPage,
     };
 };
 export type IReducer = typeof useReducer;

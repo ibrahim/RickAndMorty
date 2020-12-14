@@ -25,11 +25,11 @@ export const ListContainer = (props: Props) => {
         },
     });
 
+		console.log({ errorMessages, name, page });
     React.useEffect(() => {
         if (error) {
             const messages = error.graphQLErrors.map((i) => i.message);
             setErrorMessages(messages);
-            console.log({ messages, name, page });
         }
     }, [error]);
 
