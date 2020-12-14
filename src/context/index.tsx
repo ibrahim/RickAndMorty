@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useMemo, Dispatch, SetStateAction } from 'react';
 import produce from 'immer';
+import { debounce } from 'lodash';
 import { withHooks } from './with-hooks';
 
 export type AppState = {
@@ -74,7 +75,7 @@ const useReducer = (props: ReducerProps) => {
             }),
         );
     };
-    const newSearch = (name: string) => {
+    const newSearch = debounce((name: string) => {
         setState(
             produce((draft) => {
                 draft.errorMessages = [];
@@ -82,7 +83,7 @@ const useReducer = (props: ReducerProps) => {
 								draft.name = name
             }),
         );
-    };
+    },500);
 		
     const getPage = () => state.page;
     const getRefreshing = () => state.refreshing;
