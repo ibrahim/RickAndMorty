@@ -11,7 +11,6 @@ interface ComponentProps {
     characters: Character[];
 		info: Info;
 		fetchMore: any;
-		loading: boolean;
 }
 
 type Props = NavigationProp & ComponentProps;
@@ -61,11 +60,16 @@ const renderItem = ({ navigation }: NavigationProp) => ({ item }: RenderItemProp
     );
 };
 const List = (props: Props): JSX.Element => {
-    const { navigation, characters, info, loading, fetchMore } = props;
+    const { navigation, characters, info, fetchMore } = props;
 		const [name, setName] = React.useState<string>("")
+		const showLoading = React.useRef<boolean>(false)
 		const [errorMessages, setErrorMessages] = React.useState<string[]>([])
+
+		console.log({ showLoading: showLoading.current})
+
     const onEndReached = async () => {
 			if(info && info.next){
+				showLoading.current = true
 				try{
 					await fetchMore({
 						variables: { page: info.next, filter: { name } }
@@ -73,15 +77,15 @@ const List = (props: Props): JSX.Element => {
 				}catch(error){
 					console.log("Error Fetch more", {error})
 				}
+				showLoading.current = false
 			}
     }
 
 
     const Footer = React.useCallback(() => {
-        if (!loading) return null;
-        console.log({ loading });
+        if (!showLoading.current) return null;
         return <ActivityIndicator size="large" />;
-    }, [loading]);
+    }, [showLoading.current]);
 
     const renderItemWithNavigation = React.useCallback(renderItem({ navigation }), [navigation]);
 		const newSearch = async (name:string) => {
