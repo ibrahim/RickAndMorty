@@ -5,15 +5,8 @@ import { createStackNavigator } from '@react-navigation/stack';
 import { ApolloProvider } from '@apollo/client';
 import { AppContextProvider } from './src/context';
 import List from './src/List';
+import DetailsScreen from './src/Details';
 import { client } from './src/apollo-client';
-
-function DetailsScreen() {
-    return (
-        <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-            <Text>Details Screen</Text>
-        </View>
-    );
-}
 
 export type RootStackParamList = {
     Home: undefined;

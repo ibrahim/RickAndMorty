@@ -51,7 +51,7 @@ const getItemLayout = (data: any, index: number) => ({ length: ITEM_HEIGHT, offs
 
 const renderItem = ({ navigation }: NavigationProp) => ({ item }: RenderItemProps) => {
     return (
-        <ListItem bottomDivider onPress={() => navigation.navigate('Details', { id: '1' })}>
+        <ListItem bottomDivider onPress={() => navigation.navigate('Details', { id: item.id })}>
             { item.image && <Avatar title={item.name} source={{ uri: item.image }} />}
             <ListItem.Content>
                 <ListItem.Title>{item.name}</ListItem.Title>
