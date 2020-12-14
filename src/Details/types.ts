@@ -13,7 +13,7 @@ export interface Character {
 }
 
 export interface Variables {
-	id: number[];
+	ids: string[];
 }
 
 export interface Response {

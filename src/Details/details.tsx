@@ -61,7 +61,9 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     title: {
-        fontSize: 36,
+        fontSize: 40,
+				marginTop: 10,
+				marginBottom: 10,
         textAlign: 'center',
     },
     subtitle: {

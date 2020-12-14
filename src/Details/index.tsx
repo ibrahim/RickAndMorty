@@ -4,7 +4,6 @@ import { get } from 'lodash';
 import { RouteProp } from '@react-navigation/native';
 import Details from './details';
 import { Variables, Response } from './types';
-import { useAppContext, withHooks } from '../context';
 import { CHARACTER_DETAIL } from './queries';
 import { RootStackParamList } from '../../App';
 
@@ -17,15 +16,9 @@ interface NavigationProp {
   route: DetailsScreenRouteProp;
 }
 
-interface HooksProps {
-    name: string;
-    page: number;
-    errorMessages: string[];
-    setErrorMessages: (s: string[]) => void;
-}
-type Props = NavigationProp & HooksProps;
+type Props = NavigationProp;
 
-export const ListContainer = (props: Props) => {
+export const DetailsContainer = (props: Props) => {
 		const { route } = props
 		const { id } = route.params
     const { data } = useQuery<Response, Variables>(CHARACTER_DETAIL, {
@@ -41,15 +34,5 @@ export const ListContainer = (props: Props) => {
     );
 };
 
-const useHooksToProps = () => {
-    const { getName, getPage, setErrorMessages, getErrorMessages } = useAppContext();
 
-    return {
-        name: getName(),
-        page: getPage(),
-        errorMessages: getErrorMessages(),
-        setErrorMessages,
-    };
-};
-
-export default withHooks(useHooksToProps)(ListContainer);
+export default DetailsContainer
