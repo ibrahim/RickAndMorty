@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, FlatList, ActivityIndicator, SafeAreaView, ScrollView } from 'react-native';
 import { ListItem, Avatar } from 'react-native-elements';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { isEmpty } from 'lodash';
 import SearchBox from './search-box';
 import { Character, NavigationProp, Info} from './types';
@@ -50,26 +51,24 @@ const getItemLayout = (data: any, index: number) => ({ length: ITEM_HEIGHT, offs
 
 const renderItem = ({ navigation }: NavigationProp) => ({ item }: RenderItemProps) => {
     return (
-        <ListItem bottomDivider onPress={() => navigation.navigate('Details', { id: item.id })}>
+        <ListItem containerStyle={styles.listItem } bottomDivider onPress={() => navigation.navigate('Details', { id: item.id })}>
             { item.image && <Avatar title={item.name} source={{ uri: item.image }} />}
-            <ListItem.Content>
+            <ListItem.Content style={{ flexGrow: 1, flex:1}}>
                 <ListItem.Title>{item.name}</ListItem.Title>
             </ListItem.Content>
             <ListItem.Chevron />
         </ListItem>
     );
 };
-const List = (props: Props): JSX.Element => {
+const CharactersList = (props: Props): JSX.Element => {
     const { navigation, characters, info, fetchMore } = props;
 		const [name, setName] = React.useState<string>("")
-		const showLoading = React.useRef<boolean>(false)
+		//const showLoading = React.useRef<boolean>(false)
 		const [errorMessages, setErrorMessages] = React.useState<string[]>([])
-
-		console.log({ showLoading: showLoading.current})
 
     const onEndReached = async () => {
 			if(info && info.next){
-				showLoading.current = true
+				//showLoading.current = true
 				try{
 					await fetchMore({
 						variables: { page: info.next, filter: { name } }
@@ -77,15 +76,16 @@ const List = (props: Props): JSX.Element => {
 				}catch(error){
 					console.log("Error Fetch more", {error})
 				}
-				showLoading.current = false
+				//showLoading.current = false
 			}
     }
 
 
-    const Footer = React.useCallback(() => {
-        if (!showLoading.current) return null;
+    const Footer = React.useMemo(() => {
+				const noMoreItems = !info || (info && !info.next)
+				if(noMoreItems) return null;
         return <ActivityIndicator size="large" />;
-    }, [showLoading.current]);
+    },[info]);
 
     const renderItemWithNavigation = React.useCallback(renderItem({ navigation }), [navigation]);
 		const newSearch = async (name:string) => {
@@ -102,25 +102,28 @@ const List = (props: Props): JSX.Element => {
 		}
 		const hasError = !isEmpty(errorMessages)
     return (
-        <View style={styles.container}>
+        <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
-						<FlatList
-							style={styles.list}
-							keyExtractor={keyExtractor}
-							data={ hasError ? [] : characters}
-							renderItem={renderItemWithNavigation}
-							ListFooterComponent={Footer}
-							ListFooterComponentStyle={{ padding: 60 }}
-							ListHeaderComponent={<SearchBox newSearch={ newSearch } name={name}/>}
-							ListEmptyComponent={<ErrorMessage errorMessages={errorMessages}/>}
-							stickyHeaderIndices={[0]}
-							onEndReached={onEndReached}
-							onEndReachedThreshold={0.2}
-							/* updateCellsBatchingPeriod={50} */
-							/* getItemLayout={getItemLayout} */
-							/* maxToRenderPerBatch={30} */
-							/>
-        </View>
+						<View style={{ flex: 1 }}>
+							<SearchBox newSearch={ newSearch } name={name}/>
+							<View style={styles.list}>
+								<FlatList
+								keyExtractor={keyExtractor}
+								data={ hasError ? [] : characters}
+								renderItem={renderItemWithNavigation}
+								ListFooterComponent={Footer}
+								ListFooterComponentStyle={{ padding: 60 }}
+								ListEmptyComponent={<ErrorMessage errorMessages={errorMessages}/>}
+								onEndReached={onEndReached}
+								onEndReachedThreshold={0.2}
+								contentContainerStyle={styles.content}
+								/* updateCellsBatchingPeriod={50} */
+								/* getItemLayout={getItemLayout} */
+								/* maxToRenderPerBatch={30} */
+								/>
+							</View>
+						</View>
+        </SafeAreaView>
     );
 };
 
@@ -128,9 +131,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         width: '100%',
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
+        backgroundColor: '#ccc',
     },
     errorMessages: {
         width: '100%',
@@ -140,8 +141,16 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     list: {
-        width: '100%',
+        width: wp("100%"),
+    },
+    content: {
+    },
+    listItem: {
+        width: wp('100%'),
+				flexDirection: 'row',
+				flex:1,
+				flexGrow: 1,
     },
 });
 
-export default List;
+export default CharactersList;

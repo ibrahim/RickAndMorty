@@ -18,7 +18,7 @@ const App = (): JSX.Element => {
         <ApolloProvider client={client}>
             <NavigationContainer>
                 <Stack.Navigator>
-                    <Stack.Screen name="Home" options={{ title: 'Overview' }}>
+                    <Stack.Screen name="Home" options={{ title: 'Rick And Morty' }}>
                         {(props) => <List {...props} />}
                     </Stack.Screen>
                     <Stack.Screen name="Details" component={DetailsScreen} />

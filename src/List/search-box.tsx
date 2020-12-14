@@ -16,15 +16,14 @@ export const SearchBox = (props: Props) => {
 			if(query!==name) newSearch(query)
     }, [query, newSearch]);
 
-    return (
+	return (
         <SearchBar
             placeholder="Search..."
             onChangeText={setQuery}
             platform={Platform.OS === 'ios' ? 'ios' : 'android'}
             showCancel={Platform.OS === 'ios' ? true : false}
-            onCancel={() => setQuery("")}
             value={query}
-        />
+						/>
     );
 };
 

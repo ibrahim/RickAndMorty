@@ -1,6 +1,7 @@
 import React from 'react';
 import { StyleSheet, View, Text, FlatList } from 'react-native';
 import { ListItem } from 'react-native-elements';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import { Episode } from './types'
 
 interface ComponentProps {
@@ -20,8 +21,8 @@ const renderItem = ({ item }: RenderItemProps) => {
     return (
         <ListItem bottomDivider>
             <ListItem.Content>
-							<ListItem.Title><Text style={{ fontSize: 20}}>{item.name}</Text></ListItem.Title>
-                <ListItem.Subtitle>{item.air_date}</ListItem.Subtitle>
+							<ListItem.Title><Text style={{ fontSize: wp("4.2%")}}>{item.name}</Text></ListItem.Title>
+							<ListItem.Subtitle style={{ fontSize: wp("3.5%"), color: "grey" }}>{item.air_date}</ListItem.Subtitle>
             </ListItem.Content>
         </ListItem>
     );

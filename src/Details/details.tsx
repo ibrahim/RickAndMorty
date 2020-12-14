@@ -1,7 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, View, Text, ActivityIndicator } from 'react-native';
+import { StyleSheet, View, Text, Platform, ActivityIndicator } from 'react-native';
 import { Avatar, Tile } from 'react-native-elements';
+import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
 import Episodes from './episodes';
 import { Character } from './types';
 
@@ -16,6 +17,7 @@ const Loading = () => (
         <ActivityIndicator size="large" />
     </View>
 );
+const ios = Platform.OS === "ios"
 
 const Caption = ({ character: { species, gender, name } }: { character: Character }) => (
     <View>
@@ -34,7 +36,7 @@ const Details = (props: Props): JSX.Element => {
         <View style={styles.container}>
             <StatusBar style="auto" />
             <View style={styles.banner}>
-                <Avatar size="xlarge" rounded source={{ uri: character.image }} />
+                <Avatar size={ ios ? "xlarge" : "xlarge" } rounded source={{ uri: character.image }} />
                 <Caption character={character} />
             </View>
             <View>
@@ -61,21 +63,20 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     title: {
-        fontSize: 40,
-				marginTop: 10,
-				marginBottom: 10,
+        fontSize: wp("10%"),
+				marginTop: 5,
+				marginBottom: 5,
         textAlign: 'center',
     },
     subtitle: {
-        fontSize: 18,
+        fontSize: wp("4%"),
         textAlign: 'center',
     },
     banner: {
-        height: '40%',
+				height: ios ? hp('40%') : hp("45%"),
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
-        display: 'flex',
     },
     loading: {
         width: '100%',
@@ -86,7 +87,8 @@ const styles = StyleSheet.create({
     },
     sectionHeader: {
         width: '100%',
-        fontSize: 26,
+        fontSize: wp("5%"),
+				marginBottom: 10,
 				display: 'flex',
     },
     b: {
