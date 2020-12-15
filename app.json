@@ -1,35 +1,39 @@
 {
-  "expo": {
-    "name": "Ricky And Morty",
-    "slug": "ricky-and-morty",
-    "version": "1.0.0",
-    "orientation": "portrait",
-    "icon": "./assets/icon.png",
-    "splash": {
-      "image": "./assets/splash.png",
-      "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
-    },
-    "updates": {
-      "fallbackToCacheTimeout": 0
-    },
-    "assetBundlePatterns": [
-      "**/*"
-    ],
-    "ios": {
-      "supportsTablet": true
-    },
-    "android": {
-      "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#FFFFFF"
-      }
-    },
-    "web": {
-      "favicon": "./assets/favicon.png"
-    },
-    "privacy": "unlisted",
-    "description": "GrandeHr React Native Challenge",
-    "githubUrl": "https://github.com/ibrahim/RickyAndMorty"
-  }
+    "expo": {
+        "name": "Ricky And Morty",
+        "slug": "ricky-and-morty",
+        "version": "1.0.0",
+        "orientation": "portrait",
+        "icon": "./assets/icon.png",
+        "splash": {
+            "image": "./assets/splash.png",
+            "resizeMode": "cover",
+            "backgroundColor": "#ffffff",
+            "ldpi": "./assets/splash.png",
+            "mdpi": "./assets/splash.png",
+            "hdpi": "./assets/splash.png",
+            "xhdpi": "./assets/splash.png",
+            "xxhdpi": "./assets/splash.png",
+            "xxxhdpi": "./assets/splash.png"
+        },
+        "updates": {
+            "fallbackToCacheTimeout": 0
+        },
+        "assetBundlePatterns": ["**/*"],
+        "ios": {
+            "supportsTablet": true
+        },
+        "android": {
+            "adaptiveIcon": {
+                "foregroundImage": "./assets/adaptive-icon.png",
+                "backgroundColor": "#FFFFFF"
+            }
+        },
+        "web": {
+            "favicon": "./assets/favicon.png"
+        },
+        "privacy": "unlisted",
+        "description": "GrandeHr React Native Challenge",
+        "githubUrl": "https://github.com/ibrahim/RickyAndMorty"
+    }
 }
