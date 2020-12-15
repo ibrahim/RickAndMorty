@@ -25,10 +25,10 @@ describe('Details screen', () => {
             const avatar = await getByA11yLabel('avatar');
             expect(avatar).toBeTruthy();
         });
-        test('display character avatar with character image', async () => {
+        test.only('display character avatar with character image', async () => {
             const { getByA11yLabel } = render(<Details character={character} />);
             const avatar = await getByA11yLabel('avatar');
-            const image = avatar['_fiber'].memoizedProps.children[0].props.source.uri;
+            const image = avatar['_fiber'].memoizedProps.source.uri;
             expect(image).toEqual(character.image);
         });
     });

@@ -44,7 +44,12 @@ const Details = (props: Props): JSX.Element => {
         <View style={styles.container}>
             <StatusBar style="auto" />
             <View style={styles.banner}>
-                <Avatar accessibilityLabel="avatar" size={ios ? 'xlarge' : 'xlarge'} rounded source={{ uri: character.image }} />
+                <Avatar
+                    imageProps={{ accessibilityLabel: 'avatar' }}
+                    size={ios ? 'xlarge' : 'xlarge'}
+                    rounded
+                    source={{ uri: character.image }}
+                />
                 <Caption character={character} />
             </View>
             <View>
@@ -79,7 +84,7 @@ const styles = StyleSheet.create({
     subtitle: {
         fontSize: wp('4%'),
         flexWrap: 'wrap',
-				justifyContent: 'space-between',
+        justifyContent: 'center',
         flexDirection: 'row',
     },
     banner: {
