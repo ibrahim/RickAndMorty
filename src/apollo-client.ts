@@ -30,7 +30,10 @@ export const cache: InMemoryCache = new InMemoryCache({
                             results = results.concat(existing.results);
                         }
                         if (newResults) {
-                            results = results.concat(incoming.results);
+                            const newItems = incoming.results.filter(
+                                (i: Reference) => !results.map((r) => r['__ref']).includes(i['__ref']),
+                            );
+                            results = results.concat(newItems);
                         }
                         return {
                             ...incoming,
