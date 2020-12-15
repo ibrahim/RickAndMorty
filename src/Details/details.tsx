@@ -21,11 +21,19 @@ const ios = Platform.OS === 'ios';
 
 const Caption = ({ character: { species, gender, name } }: { character: Character }) => (
     <View>
-        <Text style={styles.title}>{name}</Text>
-        <Text style={styles.subtitle}>
-            <Text style={styles.b}>Species:</Text> {species} <Text style={styles.b}>Gender: </Text>
-            {gender}
-        </Text>
+        <View>
+            <Text style={styles.title} testID="name">
+                {name}
+            </Text>
+        </View>
+        <View style={styles.subtitle}>
+            <Text>
+                <Text style={styles.b}>Species:</Text> <Text testID="species">{species}</Text>
+            </Text>
+            <Text style={{ marginLeft: 10 }}>
+                <Text style={styles.b}>Gender: </Text> <Text testID="gender">{gender}</Text>
+            </Text>
+        </View>
     </View>
 );
 const Details = (props: Props): JSX.Element => {
@@ -36,7 +44,7 @@ const Details = (props: Props): JSX.Element => {
         <View style={styles.container}>
             <StatusBar style="auto" />
             <View style={styles.banner}>
-                <Avatar size={ios ? 'xlarge' : 'xlarge'} rounded source={{ uri: character.image }} />
+                <Avatar accessibilityLabel="avatar" size={ios ? 'xlarge' : 'xlarge'} rounded source={{ uri: character.image }} />
                 <Caption character={character} />
             </View>
             <View>
@@ -70,7 +78,9 @@ const styles = StyleSheet.create({
     },
     subtitle: {
         fontSize: wp('4%'),
-        textAlign: 'center',
+        flexWrap: 'wrap',
+				justifyContent: 'space-between',
+        flexDirection: 'row',
     },
     banner: {
         height: ios ? hp('40%') : hp('45%'),

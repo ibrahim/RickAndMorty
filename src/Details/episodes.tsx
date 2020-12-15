@@ -18,7 +18,7 @@ const keyExtractor = (item: Episode) => `${item.id}-${item.name}`;
 
 const renderItem = ({ item }: RenderItemProps) => {
     return (
-        <ListItem bottomDivider>
+        <ListItem bottomDivider accessibilityLabel="episode" testID={'episode-' + item.id}>
             <ListItem.Content>
                 <ListItem.Title>
                     <Text style={{ fontSize: wp('4.2%') }}>{item.name}</Text>
@@ -32,7 +32,14 @@ const Episodes = (props: Props): JSX.Element => {
     const { episodes } = props;
     return (
         <View style={styles.container}>
-            <FlatList style={styles.list} keyExtractor={keyExtractor} data={episodes} renderItem={renderItem} />
+            <FlatList
+                testID="episodes"
+                style={styles.list}
+                keyExtractor={keyExtractor}
+                data={episodes}
+                renderItem={renderItem}
+                initialNumToRender={50}
+            />
         </View>
     );
 };
