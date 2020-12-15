@@ -7,7 +7,7 @@ import { CHARACTERS_QUERY } from './queries';
 
 type Props = NavigationProp;
 
-export const ListContainer = (props: Props) => {
+export const ListContainer = (props: Props): JSX.Element => {
     const { data, fetchMore } = useQuery<Response, Variables>(CHARACTERS_QUERY, {
         variables: {
             filter: { name: '' },

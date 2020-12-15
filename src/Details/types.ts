@@ -1,23 +1,23 @@
 export interface Episode {
-	id: string;
-	air_date: string;
-	name: string;
+    id: string;
+    air_date: string;
+    name: string;
 }
 
 export interface Character {
-	name: string;
-	image: string;
-	species: string;
-	gender: string;
-	episode: Episode[];
+    name: string;
+    image: string;
+    species: string;
+    gender: string;
+    episode: Episode[];
 }
 
 export interface Variables {
-	ids: string[];
+    ids: string[];
 }
 
 export interface Response {
-	charactersByIds: {
-		character: Character[];
-	}
+    charactersByIds: {
+        character: Character[];
+    };
 }

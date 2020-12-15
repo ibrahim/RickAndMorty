@@ -27,10 +27,10 @@ export interface Response {
 }
 
 export interface Variables {
-	filter: {
-		name: string;
-	},
-  page: number;
+    filter: {
+        name: string;
+    };
+    page: number;
 }
 
 export interface InputProps {

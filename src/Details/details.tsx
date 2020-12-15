@@ -1,8 +1,8 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
 import { StyleSheet, View, Text, Platform, ActivityIndicator } from 'react-native';
-import { Avatar, Tile } from 'react-native-elements';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { Avatar } from 'react-native-elements';
+import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
 import Episodes from './episodes';
 import { Character } from './types';
 
@@ -17,7 +17,7 @@ const Loading = () => (
         <ActivityIndicator size="large" />
     </View>
 );
-const ios = Platform.OS === "ios"
+const ios = Platform.OS === 'ios';
 
 const Caption = ({ character: { species, gender, name } }: { character: Character }) => (
     <View>
@@ -36,7 +36,7 @@ const Details = (props: Props): JSX.Element => {
         <View style={styles.container}>
             <StatusBar style="auto" />
             <View style={styles.banner}>
-                <Avatar size={ ios ? "xlarge" : "xlarge" } rounded source={{ uri: character.image }} />
+                <Avatar size={ios ? 'xlarge' : 'xlarge'} rounded source={{ uri: character.image }} />
                 <Caption character={character} />
             </View>
             <View>
@@ -63,17 +63,17 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     title: {
-        fontSize: wp("10%"),
-				marginTop: 5,
-				marginBottom: 5,
+        fontSize: wp('10%'),
+        marginTop: 5,
+        marginBottom: 5,
         textAlign: 'center',
     },
     subtitle: {
-        fontSize: wp("4%"),
+        fontSize: wp('4%'),
         textAlign: 'center',
     },
     banner: {
-				height: ios ? hp('40%') : hp("45%"),
+        height: ios ? hp('40%') : hp('45%'),
         justifyContent: 'center',
         alignItems: 'center',
         textAlign: 'center',
@@ -87,9 +87,9 @@ const styles = StyleSheet.create({
     },
     sectionHeader: {
         width: '100%',
-        fontSize: wp("5%"),
-				marginBottom: 10,
-				display: 'flex',
+        fontSize: wp('5%'),
+        marginBottom: 10,
+        display: 'flex',
     },
     b: {
         fontWeight: 'bold',

@@ -1,17 +1,16 @@
 import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet, Text, View, FlatList, ActivityIndicator, SafeAreaView, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, FlatList, Platform, ActivityIndicator, SafeAreaView } from 'react-native';
 import { ListItem, Avatar } from 'react-native-elements';
-import {widthPercentageToDP as wp, heightPercentageToDP as hp} from 'react-native-responsive-screen';
+import { widthPercentageToDP as wp } from 'react-native-responsive-screen';
 import { isEmpty } from 'lodash';
 import SearchBox from './search-box';
-import { Character, NavigationProp, Info} from './types';
-
+import { Character, NavigationProp, Info } from './types';
 
 interface ComponentProps {
     characters: Character[];
-		info: Info;
-		fetchMore: any;
+    info: Info;
+    fetchMore: any;
 }
 
 type Props = NavigationProp & ComponentProps;
@@ -46,14 +45,19 @@ const ErrorMessage = ({ errorMessages }: { errorMessages: string[] }) => {
     );
 };
 
-//eslint-disable-next-line
-const getItemLayout = (data: any, index: number) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index });
+/* eslint-disable-next-line */
+//const getItemLayout = (data: any, index: number) => ({ length: ITEM_HEIGHT, offset: ITEM_HEIGHT * index, index });
 
+/* eslint-disable-next-line */
 const renderItem = ({ navigation }: NavigationProp) => ({ item }: RenderItemProps) => {
     return (
-        <ListItem containerStyle={styles.listItem } bottomDivider onPress={() => navigation.navigate('Details', { id: item.id })}>
-            { item.image && <Avatar title={item.name} source={{ uri: item.image }} />}
-            <ListItem.Content style={{ flexGrow: 1, flex:1}}>
+        <ListItem
+            containerStyle={styles.listItem}
+            bottomDivider
+            onPress={() => navigation.navigate('Details', { id: item.id })}
+        >
+            {item.image && <Avatar title={item.name} source={{ uri: item.image }} />}
+            <ListItem.Content style={{ flexGrow: 1, flex: 1 }}>
                 <ListItem.Title>{item.name}</ListItem.Title>
             </ListItem.Content>
             <ListItem.Chevron />
@@ -62,67 +66,69 @@ const renderItem = ({ navigation }: NavigationProp) => ({ item }: RenderItemProp
 };
 const CharactersList = (props: Props): JSX.Element => {
     const { navigation, characters, info, fetchMore } = props;
-		const [name, setName] = React.useState<string>("")
-		//const showLoading = React.useRef<boolean>(false)
-		const [errorMessages, setErrorMessages] = React.useState<string[]>([])
+    const [name, setName] = React.useState<string>('');
+    //const showLoading = React.useRef<boolean>(false)
+    const [errorMessages, setErrorMessages] = React.useState<string[]>([]);
 
     const onEndReached = async () => {
-			if(info && info.next){
-				//showLoading.current = true
-				try{
-					await fetchMore({
-						variables: { page: info.next, filter: { name } }
-					});
-				}catch(error){
-					console.log("Error Fetch more", {error})
-				}
-				//showLoading.current = false
-			}
-    }
+        if (info && info.next) {
+            //showLoading.current = true
+            try {
+                await fetchMore({
+                    variables: { page: info.next, filter: { name } },
+                });
+            } catch (error) {
+                /* eslint-disable no-console*/
+                console.error('Error Fetch more', { error });
+            }
+            //showLoading.current = false
+        }
+    };
 
-
-    const Footer = React.useMemo(() => {
-				const noMoreItems = !info || (info && !info.next)
-				if(noMoreItems) return null;
-        return <ActivityIndicator size="large" />;
-    },[info]);
+    const Footer = React.useCallback(() => {
+        if (!info) return null;
+        const noMoreItems = info && !info.next;
+        if (noMoreItems) return null;
+        return <ActivityIndicator size={Platform.OS === 'ios' ? 'large' : 50} color="#555"/>;
+    }, [info]);
 
     const renderItemWithNavigation = React.useCallback(renderItem({ navigation }), [navigation]);
-		const newSearch = async (name:string) => {
-				setName(name)
-				setErrorMessages([])
-				try{
-					await fetchMore({
-						variables: { page: 1, filter: { name: name ? name : "" } }
-					});
-				}catch(e){
-					console.log("SearchBox fetchMore", {e})
-					setErrorMessages(Array(e))
-				}
-		}
-		const hasError = !isEmpty(errorMessages)
+    const newSearch = async (name: string) => {
+        setName(name);
+        setErrorMessages([]);
+        try {
+            await fetchMore({
+                variables: { page: 1, filter: { name: name ? name : '' } },
+            });
+        } catch (e) {
+            /* eslint-disable no-console*/
+            console.log('SearchBox fetchMore', { e });
+            setErrorMessages(Array(e));
+        }
+    };
+    const hasError = !isEmpty(errorMessages);
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
-						<View style={{ flex: 1 }}>
-							<SearchBox newSearch={ newSearch } name={name}/>
-							<View style={styles.list}>
-								<FlatList
-								keyExtractor={keyExtractor}
-								data={ hasError ? [] : characters}
-								renderItem={renderItemWithNavigation}
-								ListFooterComponent={Footer}
-								ListFooterComponentStyle={{ padding: 60 }}
-								ListEmptyComponent={<ErrorMessage errorMessages={errorMessages}/>}
-								onEndReached={onEndReached}
-								onEndReachedThreshold={0.2}
-								contentContainerStyle={styles.content}
-								/* updateCellsBatchingPeriod={50} */
-								/* getItemLayout={getItemLayout} */
-								/* maxToRenderPerBatch={30} */
-								/>
-							</View>
-						</View>
+            <View style={{ flex: 1 }}>
+                <SearchBox newSearch={newSearch} name={name} />
+                <View style={styles.list}>
+                    <FlatList
+                        keyExtractor={keyExtractor}
+                        data={hasError ? [] : characters}
+                        renderItem={renderItemWithNavigation}
+                        ListFooterComponent={Footer}
+                        ListFooterComponentStyle={{ padding: 80 }}
+                        ListEmptyComponent={<ErrorMessage errorMessages={errorMessages} />}
+                        onEndReached={onEndReached}
+                        onEndReachedThreshold={0.2}
+                        contentContainerStyle={styles.content}
+                        /* updateCellsBatchingPeriod={50} */
+                        /* getItemLayout={getItemLayout} */
+                        /* maxToRenderPerBatch={30} */
+                    />
+                </View>
+            </View>
         </SafeAreaView>
     );
 };
@@ -141,15 +147,14 @@ const styles = StyleSheet.create({
         flexGrow: 1,
     },
     list: {
-        width: wp("100%"),
+        width: wp('100%'),
     },
-    content: {
-    },
+    content: {},
     listItem: {
         width: wp('100%'),
-				flexDirection: 'row',
-				flex:1,
-				flexGrow: 1,
+        flexDirection: 'row',
+        flex: 1,
+        flexGrow: 1,
     },
 });
 

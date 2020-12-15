@@ -9,30 +9,23 @@ import { RootStackParamList } from '../../App';
 
 //characters(page: 2, filter: { name: "rick" }) {
 
-
 type DetailsScreenRouteProp = RouteProp<RootStackParamList, 'Details'>;
 
 interface NavigationProp {
-  route: DetailsScreenRouteProp;
+    route: DetailsScreenRouteProp;
 }
 
 type Props = NavigationProp;
 
-export const DetailsContainer = (props: Props) => {
-		const { route } = props
-		const { id } = route.params
+export const DetailsContainer = (props: Props): JSX.Element => {
+    const { route } = props;
+    const { id } = route.params;
     const { data } = useQuery<Response, Variables>(CHARACTER_DETAIL, {
         variables: {
             ids: [id],
         },
     });
-    return (
-			<Details 
-				{...props} 
-				character={ get(data,"charactersByIds[0]",null) }
-			/>
-    );
+    return <Details {...props} character={get(data, 'charactersByIds[0]', null)} />;
 };
 
-
-export default DetailsContainer
+export default DetailsContainer;
