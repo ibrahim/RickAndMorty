@@ -6,7 +6,7 @@
     "ios": "expo start --ios",
     "web": "expo start --web",
     "eject": "expo eject",
-    "test": "jest"
+    "test": "jest --verbose --coverage=true --watchAll=false"
   },
   "dependencies": {
     "@apollo/client": "^3.3.6",
