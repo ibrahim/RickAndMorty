@@ -30,7 +30,8 @@ export const ListContainer = (props: Props): JSX.Element => {
                 });
             } catch (error) {
                 /* eslint-disable no-console*/
-                console.error('Error Fetch more', { error });
+                //console.info('Error Fetch more', { error });
+                setErrorMessages(Array(error));
             }
         }
     };

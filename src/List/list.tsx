@@ -46,7 +46,7 @@ const CharactersList = (props: Props): JSX.Element => {
             });
         } catch (e) {
             /* eslint-disable no-console*/
-            console.log('SearchBox fetchMore', { e });
+            //console.log('SearchBox fetchMore', { e });
             setErrorMessages(Array(e));
         }
     };
