@@ -7,6 +7,10 @@ export interface NavigationProp {
     navigation: HomeScreenNavigationProp;
 }
 
+export interface RenderItemProps {
+    item: Character;
+}
+
 export interface Character {
     id: string;
     name: string;
