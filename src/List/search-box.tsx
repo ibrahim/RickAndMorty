@@ -18,6 +18,8 @@ export const SearchBox = (props: Props): JSX.Element => {
 
     return (
         <SearchBar
+            accessible={true}
+            accessibilityLabel="search"
             placeholder="Search..."
             onChangeText={setQuery}
             platform={Platform.OS === 'ios' ? 'ios' : 'android'}
