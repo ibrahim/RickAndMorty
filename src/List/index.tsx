@@ -4,6 +4,7 @@ import { get } from 'lodash';
 import List from './list';
 import { NavigationProp, Variables, Response } from './types';
 import { CHARACTERS_QUERY } from './queries';
+import { Keyboard } from 'react-native';
 
 type Props = NavigationProp;
 
@@ -21,6 +22,7 @@ export const ListContainer = (props: Props): JSX.Element => {
     const characters = get(data, 'characters.results', []);
     const navigate = (id: string) => props.navigation.navigate('Details', { id });
     const onEndReached = async () => {
+        Keyboard.dismiss();
         if (info && info.next) {
             try {
                 await fetchMore({
