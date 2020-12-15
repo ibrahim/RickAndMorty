@@ -1,7 +1,8 @@
 import * as React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import List, { Props } from '../list';
-import { characters, info } from '../fixtures';
+import { NOT_FOUND, NOT_FOUND_MESSAGE } from '../helpers';
+import { characters, info, eventData } from '../fixtures';
 
 describe('Characters List', () => {
     let onEndReached: jest.Mock;
@@ -47,26 +48,18 @@ describe('Characters List', () => {
             const items = await findAllByText(/character/i);
             expect(items.length).toEqual(20);
         });
+        test('Display loading spinner until characters are not empty', async () => {
+            const { getByA11yLabel } = render(<List {...props} characters={[]} />);
+            const loading = getByA11yLabel('loading');
+            expect(loading).toBeTruthy();
+        });
+        test('Display error message when results are not found', async () => {
+            const { findByText } = render(<List {...props} errorMessages={[NOT_FOUND]} />);
+            const errorMessage = await findByText(NOT_FOUND_MESSAGE);
+            expect(errorMessage).toBeTruthy();
+        });
         test('Scroll to the bottom of the list load more items', async () => {
             const { getByTestId } = render(<List {...props} />);
-            const eventData = {
-                nativeEvent: {
-                    contentOffset: {
-                        y: 500,
-                    },
-                    contentSize: {
-                        // Dimensions of the scrollable content
-                        height: 200,
-                        width: 320,
-                    },
-                    layoutMeasurement: {
-                        // Dimensions of the device
-                        height: 100,
-                        width: 320,
-                    },
-                },
-            };
-
             const list = getByTestId('flat-list');
             fireEvent.scroll(list, eventData);
             await waitFor(() => expect(props.onEndReached).toHaveBeenCalled());

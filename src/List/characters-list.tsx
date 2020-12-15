@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, ActivityIndicator, View, StyleSheet } from 'react-native';
 import { Character, RenderItemProps } from './types';
 
 export interface CharactersFlatListProps {
@@ -13,6 +13,11 @@ export interface CharactersFlatListProps {
     onEndReached: any;
     styles: any;
 }
+const Loading = () => (
+    <View style={styles.loading} accessibilityLabel="loading">
+        <ActivityIndicator size="large" color="#666" />
+    </View>
+);
 export const CharactersFlatList = ({
     keyExtractor,
     hasError,
@@ -33,11 +38,20 @@ export const CharactersFlatList = ({
         keyExtractor={keyExtractor}
         ListFooterComponent={Footer}
         ListFooterComponentStyle={{ padding: 80 }}
-        ListEmptyComponent={<ErrorMessage errorMessages={errorMessages} />}
+        ListEmptyComponent={hasError ? <ErrorMessage errorMessages={errorMessages} /> : <Loading />}
         contentContainerStyle={styles.content}
         maxToRenderPerBatch={20}
         /* updateCellsBatchingPeriod={50} */
         /* getItemLayout={getItemLayout} */
     />
 );
+const styles = StyleSheet.create({
+    loading: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexGrow: 1,
+    },
+});
 export default CharactersFlatList;

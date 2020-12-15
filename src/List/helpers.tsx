@@ -5,11 +5,13 @@ import { isEmpty } from 'lodash';
 import { Character, Info, RenderItemProps } from './types';
 import { styles } from './styles';
 
-const NOT_FOUND = 'Error: 404: Not Found';
+export const NOT_FOUND = 'Error: 404: Not Found';
+export const NOT_FOUND_MESSAGE = 'No matching name was found.';
+
 const human = (message: string) => {
     switch (message) {
         case NOT_FOUND:
-            return 'No matching name was found.';
+            return NOT_FOUND_MESSAGE;
     }
     return message;
 };

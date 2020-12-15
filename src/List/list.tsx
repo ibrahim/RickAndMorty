@@ -62,6 +62,7 @@ const CharactersList = (props: Props): JSX.Element => {
         onEndReached,
         styles,
     };
+    console.log({ hasError });
     return (
         <SafeAreaView style={styles.container}>
             <StatusBar style="auto" />
