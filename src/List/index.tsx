@@ -8,6 +8,8 @@ import { CHARACTERS_QUERY } from './queries';
 type Props = NavigationProp;
 
 export const ListContainer = (props: Props): JSX.Element => {
+    const [name, setName] = React.useState<string>('');
+    const [errorMessages, setErrorMessages] = React.useState<string[]>([]);
     const { data, fetchMore } = useQuery<Response, Variables>(CHARACTERS_QUERY, {
         variables: {
             filter: { name: '' },
@@ -15,14 +17,35 @@ export const ListContainer = (props: Props): JSX.Element => {
         },
     });
 
-    return (
-        <List
-            {...props}
-            fetchMore={fetchMore}
-            info={get(data, 'characters.info', null)}
-            characters={get(data, 'characters.results', [])}
-        />
-    );
+    const info = get(data, 'characters.info', null);
+    const characters = get(data, 'characters.results', []);
+    const navigate = (id: string) => props.navigation.navigate('Details', { id });
+    const onEndReached = async () => {
+        if (info && info.next) {
+            try {
+                await fetchMore({
+                    variables: { page: info.next, filter: { name } },
+                });
+            } catch (error) {
+                /* eslint-disable no-console*/
+                console.error('Error Fetch more', { error });
+            }
+        }
+    };
+
+    const listProps = {
+        navigate,
+        fetchMore,
+        info,
+        characters,
+        onEndReached,
+        name,
+        setName,
+        errorMessages,
+        setErrorMessages,
+    };
+
+    return <List {...listProps} />;
 };
 
 export default ListContainer;
