@@ -14,7 +14,7 @@ type Props = ComponentProps;
 
 const Loading = () => (
     <View style={styles.loading}>
-        <ActivityIndicator size="large" />
+        <ActivityIndicator size="large" color="#666"/>
     </View>
 );
 const ios = Platform.OS === 'ios';
