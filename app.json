@@ -1,8 +1,8 @@
 {
     "expo": {
-        "name": "Ricky And Morty",
-        "slug": "ricky-and-morty",
-        "version": "1.0.0",
+        "name": "Rick And Morty",
+        "slug": "rick-and-morty",
+        "version": "1.0.1",
         "orientation": "portrait",
         "icon": "./assets/icon.png",
         "splash": {
@@ -32,8 +32,8 @@
         "web": {
             "favicon": "./assets/favicon.png"
         },
-        "privacy": "unlisted",
+        "privacy": "public",
         "description": "GrandeHr React Native Challenge",
-        "githubUrl": "https://github.com/ibrahim/RickyAndMorty"
+        "githubUrl": "https://github.com/ibrahim/RickAndMorty"
     }
 }
