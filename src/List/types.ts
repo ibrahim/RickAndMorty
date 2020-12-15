@@ -1,10 +1,10 @@
 import { StackNavigationProp } from '@react-navigation/stack';
-import { RootStackParamList } from '../../App';
+import { RootStackParamList } from '../navigator';
 
-export type ProfileScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
+export type HomeScreenNavigationProp = StackNavigationProp<RootStackParamList, 'Home'>;
 
 export interface NavigationProp {
-    navigation: ProfileScreenNavigationProp;
+    navigation: HomeScreenNavigationProp;
 }
 
 export interface Character {
@@ -16,8 +16,8 @@ export interface Character {
 export interface Info {
     count: number;
     pages: number;
-    next: number;
-    prev: number;
+    next: number | null;
+    prev: number | null;
 }
 export interface Response {
     characters: {
