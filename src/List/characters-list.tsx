@@ -26,18 +26,18 @@ export const CharactersFlatList = ({
 }: CharactersFlatListProps): JSX.Element => (
     <FlatList
         testID="flat-list"
-        keyExtractor={keyExtractor}
         data={hasError ? [] : characters}
         renderItem={renderItemWithNavigation}
+        onEndReached={onEndReached}
+        onEndReachedThreshold={0.2}
+        keyExtractor={keyExtractor}
         ListFooterComponent={Footer}
         ListFooterComponentStyle={{ padding: 80 }}
         ListEmptyComponent={<ErrorMessage errorMessages={errorMessages} />}
-        onEndReached={onEndReached}
-        onEndReachedThreshold={0.2}
         contentContainerStyle={styles.content}
+        maxToRenderPerBatch={20}
         /* updateCellsBatchingPeriod={50} */
         /* getItemLayout={getItemLayout} */
-        maxToRenderPerBatch={10}
     />
 );
 export default CharactersFlatList;
