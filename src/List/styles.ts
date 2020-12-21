@@ -24,4 +24,11 @@ export const styles = StyleSheet.create({
         flex: 1,
         flexGrow: 1,
     },
+    loading: {
+        width: '100%',
+        height: '100%',
+        justifyContent: 'center',
+        alignItems: 'center',
+        flexGrow: 1,
+    },
 });

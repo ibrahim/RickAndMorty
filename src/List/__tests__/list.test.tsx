@@ -2,31 +2,21 @@ import * as React from 'react';
 import { render, fireEvent, waitFor } from '@testing-library/react-native';
 import List, { Props } from '../list';
 import { NOT_FOUND, NOT_FOUND_MESSAGE } from '../helpers';
-import { characters, info, eventData } from '../fixtures';
+import { characters, eventData, info } from '../fixtures';
 
 describe('Characters List', () => {
     let onEndReached: jest.Mock;
-    let fetchMore: jest.Mock;
-    let setName: jest.Mock;
     let navigate: jest.Mock;
-    let setErrorMessages: jest.Mock;
     let props: Props;
     beforeEach(() => {
         onEndReached = jest.fn();
-        fetchMore = jest.fn();
-        setName = jest.fn();
         navigate = jest.fn();
-        setErrorMessages = jest.fn();
         props = {
             navigate,
-            name: '',
             errorMessages: [],
-            setName,
-            characters,
             info,
-            setErrorMessages,
+            characters,
             onEndReached,
-            fetchMore,
         };
     });
     describe('Press on list character item', () => {

@@ -5,9 +5,7 @@ import { RouteProp } from '@react-navigation/native';
 import Details from './details';
 import { Variables, Response } from './types';
 import { CHARACTER_DETAIL } from './queries';
-import { RootStackParamList } from '../../App';
-
-//characters(page: 2, filter: { name: "rick" }) {
+import { RootStackParamList } from '../app-navigator';
 
 type DetailsScreenRouteProp = RouteProp<RootStackParamList, 'Details'>;
 

@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { Text, View, Platform, ActivityIndicator } from 'react-native';
-import { ListItem, Avatar } from 'react-native-elements';
+import { Text, View, ActivityIndicator, Platform } from 'react-native';
 import { isEmpty } from 'lodash';
-import { Character, Info, RenderItemProps } from './types';
+import { Character, Info } from './types';
 import { styles } from './styles';
 
 export const NOT_FOUND = 'Error: 404: Not Found';
@@ -31,30 +30,15 @@ export const ErrorMessage = ({ errorMessages }: { errorMessages: string[] }): JS
         </View>
     );
 };
-
-/* eslint-disable-next-line */
-export const renderItem = (navigate: (s: string) => void) => ({ item }: RenderItemProps) => {
-    return (
-        <ListItem
-            accessible={true}
-            accessibilityLabel="character details"
-            testID={'character-' + item.id}
-            containerStyle={styles.listItem}
-            bottomDivider
-            onPress={() => navigate(item.id)}
-        >
-            {item.image && <Avatar title={item.name} source={{ uri: item.image }} />}
-            <ListItem.Content style={{ flexGrow: 1, flex: 1 }}>
-                <ListItem.Title>{item.name}</ListItem.Title>
-            </ListItem.Content>
-            <ListItem.Chevron />
-        </ListItem>
-    );
-};
-/* eslint-disable-next-line */
-export const getFooter = (info: Info) => () => {
+export const Footer = ({ info }: { info: Info }): JSX.Element | null => {
     if (!info) return null;
     const noMoreItems = info && !info.next;
     if (noMoreItems) return null;
     return <ActivityIndicator size={Platform.OS === 'ios' ? 'large' : 50} color="#555" />;
 };
+
+export const Loading = (): JSX.Element => (
+    <View style={styles.loading} accessibilityLabel="loading">
+        <ActivityIndicator size="large" color="#666" />
+    </View>
+);
