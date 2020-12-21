@@ -26,7 +26,7 @@ export const ListContainer = (props: Props): JSX.Element => {
 
     const navigate = (id: string) => props.navigation.navigate('Details', { id });
 
-    const onEndReached = async () => {
+    const onEndReached = React.useCallback(async () => {
         Keyboard.dismiss();
         if (info && info.next) {
             try {
@@ -39,20 +39,22 @@ export const ListContainer = (props: Props): JSX.Element => {
                 setErrorMessages(Array(error));
             }
         }
-    };
+    }, [info, name, setErrorMessages]);
 
-    const newSearch = async (name: string) => {
-        setName(name);
-        setErrorMessages([]);
-        try {
-            await fetchMore({
-                variables: { page: 1, filter: { name: name ? name : '' } },
-            });
-        } catch (e) {
-            setErrorMessages(Array(e));
-        }
-    };
-
+    const newSearch = React.useCallback(
+        async (name: string) => {
+            setName(name);
+            setErrorMessages([]);
+            try {
+                await fetchMore({
+                    variables: { page: 1, filter: { name: name ? name : '' } },
+                });
+            } catch (e) {
+                setErrorMessages(Array(e));
+            }
+        },
+        [setName, setErrorMessages],
+    );
 
     return (
         <SafeAreaView style={styles.container}>
